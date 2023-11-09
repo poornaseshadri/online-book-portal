@@ -67,3 +67,45 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `firstName` varchar(300) NOT NULL,
+  `lastName` varchar(300) NOT NULL,
+  `email` varchar(300) NOT NULL,
+  `password` varchar(500) NOT NULL,
+  `confirmPassword` varchar(500) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+
+INSERT INTO `users` (`id`, `firstName`, `lastName`, `email`, `password`, `confirmPassword`) VALUES
+(1, 'Poorna', 'Seshadri', 'poorna@gmail.com', 'pawankalyan', 'pawankalyan'),
+(2, 'Dwaraka', 'Vutla', 'dwaraka@gmail.com', 'maheshbabu', 'maheshbabu');
+
+
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+  ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+COMMIT;
+
+
+-- ORDERS table creation
+CREATE TABLE `orders` (
+  `orderId` varchar(300) NOT NULL,
+  `orderDate` DATE,
+  `email` varchar(300) NOT NULL,
+  `books` varchar(300) NOT NULL,
+  `bookIds` varchar(300) NOT NULL,
+  `orderPrice`  float(10,2)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+
+INSERT INTO `books` (`id`, `title`, `desc`, `price`, `cover`) VALUES
+(4, 'Book4', 'this is an amazing book to read when you are free ', 243.2, 'https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8Mnx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60'),
+(5, 'Book5', 'fire folks is ming blowing book to read it will blow your mind', 1342.3, 'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=987&q=80');
+
+
+
+

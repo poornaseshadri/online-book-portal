@@ -11,7 +11,23 @@ dotenv.config()
 app.use(cors());
 app.use(express.json());
 app.use(morgan('common'));
-const db = mysql.createConnection({
+const booksDb = mysql.createConnection({
+  host: process.env.DB_HOST ,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.PORT,
+  database: "test",
+});
+
+const usersDB = mysql.createConnection({
+  host: process.env.DB_HOST ,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.PORT,
+  database: "test",
+});
+
+const ordersDB = mysql.createConnection({
   host: process.env.DB_HOST ,
   user: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
@@ -25,7 +41,7 @@ app.get("/", (req, res) => {
 
 app.get("/books", (req, res) => {
   const q = "SELECT * FROM books";
-  db.query(q, (err, data) => {
+  booksDb.query(q, (err, data) => {
     if (err) {
       console.log(err);
       return res.json(err);
@@ -44,7 +60,7 @@ app.post("/books", (req, res) => {
     req.body.cover,
   ];
 
-  db.query(q, [values], (err, data) => {
+  booksDb.query(q, [values], (err, data) => {
     if (err) return res.send(err);
     return res.json(data);
   });
@@ -54,7 +70,7 @@ app.delete("/books/:id", (req, res) => {
   const bookId = req.params.id;
   const q = " DELETE FROM books WHERE id = ? ";
 
-  db.query(q, [bookId], (err, data) => {
+  booksDb.query(q, [bookId], (err, data) => {
     if (err) return res.send(err);
     return res.json(data);
   });
@@ -71,11 +87,67 @@ app.put("/books/:id", (req, res) => {
     req.body.cover,
   ];
 
-  db.query(q, [...values,bookId], (err, data) => {
+  booksDb.query(q, [...values,bookId], (err, data) => {
     if (err) return res.send(err);
     return res.json(data);
   });
 });
+
+app.post("/users/register", (req, res) => {
+  const q = "INSERT INTO users(`firstName`, `lastName`, `email`, `password`, `confirmPassword`) VALUES (?)";
+
+  const values = [
+    req.body.firstName,
+    req.body.lastName,
+    req.body.email,
+    req.body.password,
+    req.body.confirmPassword,
+  ];
+
+  usersDB.query(q, [values], (err, data) => {
+    if (err) return res.send(err);
+    return res.json(data);
+  });
+});
+
+app.post("/users/login", (req, res) => {
+  const q = "SELECT * FROM users where `email`=? and `password` =?";
+  usersDB.query(q, [req.body.email, req.body.password],(err, data) => {
+    if (err) return res.json(err);
+    return res.json(data)
+  });
+});
+
+app.post("/orders/checkout", (req, res) => {
+  const q = "INSERT INTO orders(`orderId`, `orderDate`, `email`, `books`, `bookIds`, `orderPrice`) VALUES (?)";
+
+  const values = [
+    req.body.orderId,
+    new Date(req.body.orderDate),
+    req.body.email,
+    req.body.books,
+    req.body.bookIds,
+    req.body.orderPrice
+  ];
+  ordersDB.query(q, [values], (err, data) => {
+    if (err) return res.send(err);
+    return res.json({orderId: req?.body?.orderId});
+  });
+});
+
+
+app.post("/orders/list", (req, res) => {
+  const q = "SELECT * FROM orders where `email` = ? ";
+  ordersDB.query(q, [req.body.emailId],(err, data) => {
+    if (err) {
+      console.log(err);
+      return res.json(err);
+    }
+    return res.json(data);
+  });
+});
+
+
 
 app.listen(80, () => {
   console.log("Connected to backend.");
